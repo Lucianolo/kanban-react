@@ -6,11 +6,12 @@ class Task extends Component {
     this.state = {
       description: props.task.description,
     }
+    this.onSubmit = this.onSubmit.bind(this)
   }
 
   onKeyDown (event) {
     if (event.key === 'Enter') {
-      this.props.onSubmit(this.props.task.id, this.state.description)
+      this.onSubmit(this.props.task.id)
     }
   }
 
@@ -19,10 +20,17 @@ class Task extends Component {
     if (task.persisted) {
       this.props.onDelete(task.id)
     } else {
-      this.props.onSubmit(task.id, this.state.description)
+      this.onSubmit(task.id)
     }
   }
 
+  onSubmit (taskId) {
+    if (this.state.description.length) {
+      this.props.onSubmit(taskId, this.state.description)
+    } else {
+      this.props.displayErrors("Task Description can't be blank")
+    }
+  }
   render() {
     const {persisted} = this.props.task
     return (
@@ -42,6 +50,7 @@ class Task extends Component {
           }
           <button
             type='button'
+            title={persisted ? 'Delete' : 'Save'}
             className={`action-button ${persisted ? 'delete-button' : 'save-button'}`}
             onClick={this.manageTask.bind(this)}
           >

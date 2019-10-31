@@ -1,39 +1,53 @@
 import React, { Component } from 'react'
 import Column from './Column'
+import Api from '../services/Api'
 
 const TICKET_STATUSES = ['To-Do', 'In Progress', 'Done']
 
-const MOCK_DATA = [
-  {id: 1, status: 'To-Do', description: 'Do Something', persisted: true},
-  {id: 2, status: 'To-Do', description: 'Do Something', persisted: true},
-  {id: 3, status: 'To-Do', description: 'Do Something', persisted: true},
-  {id: 4, status: 'In Progress', description: 'Doing something', persisted: true},
-  {id: 5, status: 'Done', description: 'Did Something', persisted: true},
-  {id: 6, status: 'To-Do', description: 'Do Something', persisted: true},
-  {id: 7, status: 'To-Do', description: 'Do Something', persisted: true},
-  {id: 8, status: 'Done', description: 'Did Something', persisted: true},
-  {id: 9, status: 'In Progress', description: 'Doing something', persisted: true},
-]
 class Board extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      tasks: MOCK_DATA
+      tasks: [],
+      editingTask: false,
+      errors: null,
     }
   }
 
+  componentDidMount() {
+    Api.getTasks()
+      .then(this.onGetTasksSuccess.bind(this))
+      .catch(this.onGetTasksFailure)
+  }
+
+  onGetTasksSuccess (data) {
+    const tasks = data || []
+    this.setState({tasks})
+  }
+
+  onGetTasksFailure (e) {
+    console.log(e)
+  }
+
   addTask (status) {
-    const task = {
-      id: this.state.tasks[this.state.tasks.length - 1].id + 1,
-      status: status,
-      description: '',
-      persisted: false,
-    }
-    this.setState((state) => {
-      return {
-        tasks: [...state.tasks, task],
+    if (this.state.editingTask) {
+      this.displayErrors('Please save the previous task before adding a new one')
+    } else {
+      const {tasks} = this.state
+      const nextId = tasks.length
+      const task = {
+        id: nextId,
+        status: status,
+        description: '',
+        persisted: false,
       }
-    })
+      this.setState((state) => {
+        return {
+          tasks: [...state.tasks, task],
+          editingTask: true,
+        }
+      })
+    }
   }
 
   saveTask (taskId, description) {
@@ -43,8 +57,11 @@ class Board extends Component {
     currentTask.persisted = true
     this.setState(() => {
       return {
-        tasks: newTasks
+        tasks: newTasks,
+        editingTask: false,
       }
+    }, () => {
+      Api.setTasks(this.state.tasks.filter((task) => task.persisted))
     })
   }
 
@@ -54,6 +71,16 @@ class Board extends Component {
       return {
         tasks: newTasks
       }
+    }, () => {
+      Api.setTasks(this.state.tasks.filter((task) => task.persisted))
+    })
+  }
+
+  displayErrors (errorMessage) {
+    this.setState({errors: errorMessage}, () => {
+      setTimeout(() => {
+        this.setState({errors: null})
+      }, 2000)
     })
   }
 
@@ -63,6 +90,11 @@ class Board extends Component {
         <div className='heading'>
           (Mini)Kanban board
         </div>
+        {this.state.errors &&
+          <div className='errors'>
+            {this.state.errors}
+          </div>
+        }
         <div className='columns horizontal'>
           {TICKET_STATUSES.map((status, index) => (
             <Column
@@ -72,6 +104,7 @@ class Board extends Component {
               tasks={this.state.tasks.filter((task) => task.status === status)}
               saveTask={this.saveTask.bind(this)}
               deleteTask={this.deleteTask.bind(this)}
+              displayErrors={this.displayErrors.bind(this)}
             />
           ))}
         </div>
