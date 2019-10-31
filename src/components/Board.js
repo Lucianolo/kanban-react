@@ -36,7 +36,7 @@ class Board extends Component {
       this.displayErrors('Please save the previous task before adding a new one')
     } else {
       const task = {
-        id: this.state.length,
+        id: this.state.tasks.length,
         status: status,
         description: '',
         persisted: false,

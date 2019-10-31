@@ -15,11 +15,12 @@ const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors }) =
           +
         </div>
       </div>
+
       <div className='column-body'>
-        {tasks.map((task) => (
+        {tasks.map((task, index) => (
           <Task
             task={task}
-            key={task.id}
+            key={index}
             onSubmit={saveTask}
             onDelete={deleteTask}
             displayErrors={displayErrors}
