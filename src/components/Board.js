@@ -26,12 +26,33 @@ class Board extends Component {
     const task = {
       id: this.state.tasks[this.state.tasks.length - 1].id + 1,
       status: status,
-      description: 'Add a description',
+      description: '',
       persisted: false,
     }
     this.setState((state) => {
       return {
         tasks: [...state.tasks, task],
+      }
+    })
+  }
+
+  saveTask (taskId, description) {
+    const newTasks = [...this.state.tasks]
+    const currentTask = newTasks.find((task) => {return task.id === taskId})
+    currentTask.description = description
+    currentTask.persisted = true
+    this.setState(() => {
+      return {
+        tasks: newTasks
+      }
+    })
+  }
+
+  deleteTask (taskId) {
+    const newTasks = this.state.tasks.filter((task) => {return task.id !== taskId})
+    this.setState(() => {
+      return {
+        tasks: newTasks
       }
     })
   }
@@ -49,6 +70,8 @@ class Board extends Component {
               name={status}
               key={index}
               tasks={this.state.tasks.filter((task) => task.status === status)}
+              saveTask={this.saveTask.bind(this)}
+              deleteTask={this.deleteTask.bind(this)}
             />
           ))}
         </div>

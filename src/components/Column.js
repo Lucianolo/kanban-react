@@ -1,6 +1,6 @@
 import React from 'react'
-
-const Column = ({ name, addTask, tasks }) => {
+import Task from './Task'
+const Column = ({ name, addTask, tasks, saveTask, deleteTask }) => {
   return (
     <div className='Column vertical'>
       <div className='column-header'>
@@ -16,12 +16,12 @@ const Column = ({ name, addTask, tasks }) => {
       </div>
       <div className='column-body'>
         {tasks.map((task) => (
-          <div
-            className='task-box'
+          <Task
+            task={task}
             key={task.id}
-          >
-            {task.description}
-          </div>
+            onSubmit={saveTask}
+            onDelete={deleteTask}
+          />
         ))}
       </div>
     </div>
