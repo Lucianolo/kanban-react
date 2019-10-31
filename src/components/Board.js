@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Column from './Column'
 import Api from '../services/Api'
 
+// In case we want to add Statuses in the future, it's enough to add it to this array
 const TICKET_STATUSES = ['To-Do', 'In Progress', 'Done']
 
 class Board extends Component {
@@ -26,17 +27,16 @@ class Board extends Component {
   }
 
   onGetTasksFailure (e) {
-    console.log(e)
+    this.displayErrors(e.name + ': ' + e.message)
   }
 
+  // Creates an empty task (Not persisted, only present in State
   addTask (status) {
     if (this.state.editingTask) {
       this.displayErrors('Please save the previous task before adding a new one')
     } else {
-      const {tasks} = this.state
-      const nextId = tasks.length
       const task = {
-        id: nextId,
+        id: this.state.length,
         status: status,
         description: '',
         persisted: false,
@@ -50,6 +50,7 @@ class Board extends Component {
     }
   }
 
+  // Saves the task as persisted, sets its description and updates localstorage
   saveTask (taskId, description) {
     const newTasks = [...this.state.tasks]
     const currentTask = newTasks.find((task) => {return task.id === taskId})
@@ -65,6 +66,7 @@ class Board extends Component {
     })
   }
 
+  // Deletes a task by id, updates localstorage
   deleteTask (taskId) {
     const newTasks = this.state.tasks.filter((task) => {return task.id !== taskId})
     this.setState(() => {
@@ -76,6 +78,7 @@ class Board extends Component {
     })
   }
 
+  // Given an error string, displays an error message for 2 seconds
   displayErrors (errorMessage) {
     this.setState({errors: errorMessage}, () => {
       setTimeout(() => {

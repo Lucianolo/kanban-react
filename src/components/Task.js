@@ -6,15 +6,16 @@ class Task extends Component {
     this.state = {
       description: props.task.description,
     }
-    this.onSubmit = this.onSubmit.bind(this)
   }
 
+  // Trigger saving the task when enter is pressed
   onKeyDown (event) {
     if (event.key === 'Enter') {
       this.onSubmit(this.props.task.id)
     }
   }
 
+  // Handles clicks on delete and save
   manageTask () {
     const {task} = this.props
     if (task.persisted) {
@@ -24,6 +25,8 @@ class Task extends Component {
     }
   }
 
+  // Proxy to props.submit, used to make sure description is filled,
+  // if not, displays an error.
   onSubmit (taskId) {
     if (this.state.description.length) {
       this.props.onSubmit(taskId, this.state.description)
@@ -31,6 +34,7 @@ class Task extends Component {
       this.props.displayErrors("Task Description can't be blank")
     }
   }
+
   render() {
     const {persisted} = this.props.task
     return (

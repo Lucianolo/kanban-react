@@ -1,5 +1,6 @@
 import React from 'react'
 import Task from './Task'
+
 const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors }) => {
   return (
     <div className='Column vertical'>
