@@ -4,7 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 `Board:` Handles the main logic, fetching/saving data, renders the columns <br />
 `Column:` Renders a column and its related Tasks <br />
 `Taks:` Renders a task, holding the description in its state until it's saved. <br />
-
+`Draggable:` Higher-Order component, wrap a component with this for making it draggable <br />
+`Droppable:` Higher-Order component, wrap a component with this for making it a drop area, with a specific drop value and callback function.  <br />
 ## Services
 `Api:` For now just gets and sets data from/to localstorage, it can be easily modified to use an api endpoint instead.
 ## Available Scripts
