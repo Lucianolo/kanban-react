@@ -1,5 +1,6 @@
 import React from 'react'
 import Task from './Task'
+import Draggable from './drag/Draggable'
 
 const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors, editTask }) => {
   return (
@@ -18,14 +19,18 @@ const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors, edi
 
       <div className='column-body'>
         {tasks.map((task, index) => (
-          <Task
-            task={task}
+          <Draggable
+            dragId={task.id}
             key={index}
-            onSubmit={saveTask}
-            onDelete={deleteTask}
-            displayErrors={displayErrors}
-            editTask={editTask}
-          />
+          >
+            <Task
+              task={task}
+              onSubmit={saveTask}
+              onDelete={deleteTask}
+              displayErrors={displayErrors}
+              editTask={editTask}
+            />
+          </Draggable>
         ))}
       </div>
     </div>
