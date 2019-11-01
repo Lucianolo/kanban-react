@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Column from './Column'
 import Api from '../services/Api'
+import Droppable from './drag/Droppable'
 
 // In case we want to add Statuses in the future, it's enough to add it to this array
 const TICKET_STATUSES = ['To-Do', 'In Progress', 'Done']
@@ -35,8 +36,10 @@ class Board extends Component {
     if (this.state.editingTask) {
       this.displayErrors('Please save the previous task before adding a new one')
     } else {
+      const {tasks} = this.state
+      const newId = tasks.length ? tasks[tasks.length - 1].id + 1 : 0
       const task = {
-        id: this.state.tasks.length,
+        id: newId,
         status: status,
         description: '',
         persisted: false,
@@ -87,6 +90,8 @@ class Board extends Component {
     })
   }
 
+  // Triggered by double click, sets the task persisted to false, so that it
+  // goes back to the 'edit' stage
   editTask (id) {
     let tasks = this.state.tasks.filter((task) => {
       if (task.id === id) {
@@ -94,10 +99,21 @@ class Board extends Component {
       }
       return task
     })
-    this.setState({
-      ...this.state,
-      tasks
-    });
+    this.setState({tasks})
+  }
+
+  // Passed as callback for the drop event, updates the status of the dropped ticket.
+  onStatusChange (id, args) {
+    const newStatus = args[0]
+    let tasks = this.state.tasks.filter((task) => {
+      if (task.id === parseInt(id)) {
+        task.status = newStatus
+      }
+      return task
+    })
+    this.setState({tasks}, () => {
+      Api.setTasks(this.state.tasks.filter((task) => task.persisted))
+    })
   }
 
   render() {
@@ -113,16 +129,22 @@ class Board extends Component {
         }
         <div className='columns horizontal'>
           {TICKET_STATUSES.map((status, index) => (
-            <Column
-              addTask={this.addTask.bind(this)}
-              name={status}
+            <Droppable
+              dropName={status}
+              dropCallback={this.onStatusChange.bind(this)}
               key={index}
-              tasks={this.state.tasks.filter((task) => task.status === status)}
-              saveTask={this.saveTask.bind(this)}
-              deleteTask={this.deleteTask.bind(this)}
-              displayErrors={this.displayErrors.bind(this)}
-              editTask={this.editTask.bind(this)}
-            />
+              classNames='Column vertical'
+            >
+              <Column
+                addTask={this.addTask.bind(this)}
+                name={status}
+                tasks={this.state.tasks.filter((task) => task.status === status)}
+                saveTask={this.saveTask.bind(this)}
+                deleteTask={this.deleteTask.bind(this)}
+                displayErrors={this.displayErrors.bind(this)}
+                editTask={this.editTask.bind(this)}
+              />
+            </Droppable>
           ))}
         </div>
       </div>

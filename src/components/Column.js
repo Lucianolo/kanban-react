@@ -4,7 +4,7 @@ import Draggable from './drag/Draggable'
 
 const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors, editTask }) => {
   return (
-    <div className='Column vertical'>
+    <>
       <div className='column-header'>
         <div className='column-name'>
           {name}
@@ -18,10 +18,10 @@ const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors, edi
       </div>
 
       <div className='column-body'>
-        {tasks.map((task, index) => (
+        {tasks.map((task) => (
           <Draggable
             dragId={task.id}
-            key={index}
+            key={task.id}
           >
             <Task
               task={task}
@@ -33,7 +33,7 @@ const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors, edi
           </Draggable>
         ))}
       </div>
-    </div>
+    </>
   )
 }
 
