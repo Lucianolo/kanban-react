@@ -1,7 +1,7 @@
 import React from 'react'
 import Task from './Task'
 
-const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors }) => {
+const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors, editTask }) => {
   return (
     <div className='Column vertical'>
       <div className='column-header'>
@@ -24,6 +24,7 @@ const Column = ({ name, addTask, tasks, saveTask, deleteTask, displayErrors }) =
             onSubmit={saveTask}
             onDelete={deleteTask}
             displayErrors={displayErrors}
+            editTask={editTask}
           />
         ))}
       </div>

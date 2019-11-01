@@ -36,10 +36,11 @@ class Task extends Component {
   }
 
   render() {
-    const {persisted} = this.props.task
+    const {persisted, id} = this.props.task
     return (
         <div
           className='task-box'
+          onDoubleClick={() => this.props.editTask(id)}
         >
           { persisted ?
             this.state.description :

@@ -87,6 +87,19 @@ class Board extends Component {
     })
   }
 
+  editTask (id) {
+    let tasks = this.state.tasks.filter((task) => {
+      if (task.id === id) {
+        task.persisted = false
+      }
+      return task
+    })
+    this.setState({
+      ...this.state,
+      tasks
+    });
+  }
+
   render() {
     return (
       <div className='Board'>
@@ -108,6 +121,7 @@ class Board extends Component {
               saveTask={this.saveTask.bind(this)}
               deleteTask={this.deleteTask.bind(this)}
               displayErrors={this.displayErrors.bind(this)}
+              editTask={this.editTask.bind(this)}
             />
           ))}
         </div>
